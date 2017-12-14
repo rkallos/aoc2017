@@ -1,6 +1,7 @@
 #lang racket
 
 (require file/sha1)
+(provide part2)
 
 (module+ test
   (require rackunit))

@@ -1,5 +1,9 @@
 #lang racket
 
+(provide new-uf
+         find
+         union!)
+
 (module+ test
   (require rackunit))
 
@@ -14,6 +18,10 @@
       x-key))
 
 (define (union! g x-key y-key)
+  (unless (hash-has-key? g x-key)
+    (hash-set! g x-key (new-uf x-key)))
+  (unless (hash-has-key? g y-key)
+    (hash-set! g y-key (new-uf y-key)))
   (define x-root (hash-ref g (find g x-key)))
   (define y-root (hash-ref g (find g y-key)))
   (cond
@@ -30,10 +38,10 @@
   (for ([line lines])
     (match-define (list f rest ...)
       (map string->number (regexp-match* #rx"[0-9]+" line)))
-    (when (not (hash-has-key? g f))
+    (unless (hash-has-key? g f)
       (hash-set! g f (new-uf f)))
     (for ([r rest])
-      (when (not (hash-has-key? g r))
+      (unless (hash-has-key? g r)
         (hash-set! g r (new-uf r)))
       (union! g f r)))
   g)
